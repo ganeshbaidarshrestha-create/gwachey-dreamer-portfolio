@@ -9,6 +9,8 @@ dist/
 
 .open-preview.err.txt
 .open-preview.out.txt
+.run-app.err.txt
+.run-app.out.txt
 .qa-preview-4176.err.txt
 .qa-preview-4176.out.txt
 .qa-preview.err.txt

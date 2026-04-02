@@ -39,6 +39,11 @@ function App() {
   const [isLocalAdminAvailable, setIsLocalAdminAvailable] = useState(false);
 
   useEffect(() => {
+    const hostname = window.location.hostname;
+    const localAdminEnabled =
+      hostname === "localhost" || hostname === "127.0.0.1" || hostname === "::1";
+    setIsLocalAdminAvailable(localAdminEnabled);
+
     const storedProjects = window.localStorage.getItem("gwachey-projects");
     const storedPoetry = window.localStorage.getItem("gwachey-poetry");
 
@@ -61,10 +66,6 @@ function App() {
         return "home";
       })();
       setActiveCaseStudySlug(url.searchParams.get("slug") || "");
-      const hostname = window.location.hostname;
-      setIsLocalAdminAvailable(
-        hostname === "localhost" || hostname === "127.0.0.1" || hostname === "::1",
-      );
       setPage(activePage);
     };
 
@@ -72,6 +73,7 @@ function App() {
     window.addEventListener("hashchange", syncAdminVisibility);
     window.addEventListener("popstate", syncAdminVisibility);
     const handleShortcut = (event) => {
+      if (!localAdminEnabled) return;
       if (event.ctrlKey && event.shiftKey && event.key.toLowerCase() === "g") {
         event.preventDefault();
         navigateToPage("admin-login", { admin: true });
@@ -219,11 +221,9 @@ function App() {
             isLocalAdminAvailable={isLocalAdminAvailable}
           />
         ) : (
-          <AdminLoginPage
-            onBack={() => navigateToPage("home")}
-            onSuccess={authenticateAdmin}
-            isLocalAdminAvailable={isLocalAdminAvailable}
-          />
+          <main>
+            <HeroSection onOpenPoetryBook={() => navigateToPage("poetry-book")} />
+          </main>
         )
       ) : page === "admin" ? (
         canAccessAdmin ? (
@@ -241,11 +241,9 @@ function App() {
             onLock={lockAdmin}
           />
         ) : (
-          <AdminLoginPage
-            onBack={() => navigateToPage("home")}
-            onSuccess={authenticateAdmin}
-            isLocalAdminAvailable={isLocalAdminAvailable}
-          />
+          <main>
+            <HeroSection onOpenPoetryBook={() => navigateToPage("poetry-book")} />
+          </main>
         )
       ) : (
         <>
